@@ -92,21 +92,41 @@ void MainWindow::on_btn_change_clicked()
 {
     QList<QTableWidgetItem*> items = ui->tableWidget->selectedItems();
 
-    QTableWidgetItem *item = items.at(1);
-    from = item->text();
-    dialog_singnal(sql_query,from);   //调用函数，触发信号，传递数据表，form代表所选行的学号，学号唯一用于区分
+    if(!items.empty())
+    {
+        QTableWidgetItem *item = items.at(1);
+        from = item->text();
+        dialog_singnal(sql_query,from);   //调用函数，触发信号，传递数据表，form代表所选行的学号，学号唯一用于区分
+    }
 }
 
 void MainWindow::on_btn_del_clicked()
 {
+    int curRow;
     QList<QTableWidgetItem*> items = ui->tableWidget->selectedItems();
 
-    QTableWidgetItem *item = items.at(1);
-    from = item->text();
-    sql_query.exec("delete from student where num="+from);
+    if(!items.empty())
+    {
+        QTableWidgetItem *item = items.at(1);
+        from = item->text();
+        sql_query.exec("delete from student where num="+from);
 
-    on_btn_update_clicked();
-    ui->tableWidget->selectRow(ui->tableWidget->rowCount()-1);  //指向删除的上一条
+        curRow = ui->tableWidget->currentRow();
+        if(curRow > 0)  //当前不是第0条
+        {
+            on_btn_update_clicked();
+            ui->tableWidget->selectRow(curRow-1);  //指向删除的上一条
+        }
+        else if(ui->tableWidget->rowCount() <= 1)   //是第0条，且只有这一条数据
+        {
+            ui->tableWidget->setRowCount(0);
+        }
+        else        //是第0条，但后面还有数据，指向新的第0条
+        {
+            on_btn_update_clicked();
+            ui->tableWidget->selectRow(curRow);
+        }
+    }
 }
 
 void MainWindow::on_btn_search_clicked()

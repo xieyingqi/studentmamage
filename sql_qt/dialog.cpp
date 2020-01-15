@@ -59,10 +59,6 @@ void Dialog::dialog_slot(QSqlQuery query,QString sig_from)
     sql_query = query;
     sigle_from = sig_from;
 
-    QString name;
-    uint num;
-    double score;
-
     if(sigle_from == "0")
     {
         ui->lineEdit->setText("");
@@ -74,9 +70,6 @@ void Dialog::dialog_slot(QSqlQuery query,QString sig_from)
     {
         sql_query.exec(QString("select * from student where num=%1").arg(sigle_from.toInt()));
         sql_query.next();
-        name = sql_query.value(0).toString();
-        num = sql_query.value(1).toUInt();
-        score = sql_query.value(2).toDouble();
 
         ui->lineEdit->setText(sql_query.value(0).toString());
         ui->lineEdit_2->setText(sql_query.value(1).toString());
